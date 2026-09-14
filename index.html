@@ -1,55 +1,7 @@
-<!DOCTYPE html>
-<html lang="fa">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PASHA AUTO MINING</title>
-    <script src="https://telegram.org"></script>
-    <style>
-        body {
-            margin: 0; padding: 0; background: radial-gradient(circle, #1a1a2e 0%, #0f0f1b 100%);
-            color: white; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            text-align: center; overflow: hidden; user-select: none; -webkit-user-select: none;
-        }
-        .container { display: flex; flex-direction: column; justify-content: space-between; height: 100vh; padding: 20px; box-sizing: border-box; }
-        .score-section { margin-top: 30px; }
-        .score-title { font-size: 14px; color: #8a8aab; letter-spacing: 1px; }
-        .score-value { font-size: 42px; font-weight: bold; margin-top: 5px; color: #ffd700; text-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
-        
-        .mining-section { display: flex; flex-direction: column; justify-content: center; align-items: center; flex-grow: 1; }
-        .coin-wrapper { position: relative; }
-        .coin {
-            width: 200px; height: 200px; background: radial-gradient(circle, #ffe066 0%, #f5b041 70%, #d35400 100%);
-            border-radius: 50%; box-shadow: 0 0 30px rgba(245, 176, 65, 0.5);
-            display: flex; justify-content: center; align-items: center; font-size: 60px;
-            border: 8px solid #f39c12; animation: spin 8s linear infinite; cursor: pointer;
-            transition: transform 0.1s;
-        }
-        .coin:active { transform: scale(0.95); }
-        
-        @keyframes spin {
-            0% { transform: rotateY(0deg); }
-            100% { transform: rotateY(360deg); }
-        }
-
-        .tank-section { margin-top: 20px; width: 260px; }
-        .tank-title { font-size: 14px; color: #aeb6bf; margin-bottom: 5px; }
-        .tank-value { font-size: 24px; font-weight: bold; color: #2ecc71; margin-bottom: 10px; }
-        
-        .claim-btn {
-            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
-            border: none; color: white; padding: 15px 40px; font-size: 18px; font-weight: bold;
-            border-radius: 12px; cursor: pointer; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
-            transition: transform 0.1s ease, filter 0.2s; width: 100%; margin-top: 5px;
-        }
-        .claim-btn:active { transform: scale(0.98); }
-        .claim-btn:disabled { background: #566573; box-shadow: none; cursor: not-allowed; color: #bdc3c7; }
-
-        .footer-info { margin-bottom: 20px; color: #7f8c8d; font-size: 12px; }
-    </style>
-</head>
-<body>
-    <div class="container">
+<div class="container">
+    
+    <!-- 1. صفحه ماینینگ اصلی -->
+    <div id="page-mining" class="page active">
         <div class="score-section">
             <div class="score-title">TOTAL PASHA BALANCE</div>
             <div id="score" class="score-value">0</div>
@@ -68,78 +20,250 @@
         </div>
 
         <div class="footer-info">
-            ⚡ Mining status: <span id="status-text" style="color: #2ecc71;">Active ✅</span>
+            ⚡ Mining status: <span style="color: #2ecc71;">Active ✅</span>
         </div>
     </div>
 
-    <script>
-        const tg = window.Telegram ? window.Telegram.WebApp : null;
-        if (tg) {
-            tg.expand(); 
-            tg.ready();
-        }
-
-        // مقداردهی و بررسی متغیرها
-        let totalScore = parseInt(localStorage.getItem('pasha_total_score')) || 0;
-        let tankScore = parseInt(localStorage.getItem('pasha_tank_score')) || 0;
-        let maxTank = 500; 
-
-        // 🌟 محاسبه غیبت کاربر بلافاصله پس از لود صفحه بدون نیاز به کلیک
-        const lastSavedTime = localStorage.getItem('pasha_last_time');
-        if (lastSavedTime) {
-            const currentTime = Math.floor(Date.now() / 1000);
-            const secondsPassed = currentTime - parseInt(lastSavedTime);
+    <!-- 2. صفحه تسک‌ها (Tasks) -->
+    <div id="page-tasks" class="page">
+        <div>
+            <div class="page-title">📋 Tasks & Quests</div>
+            <div style="color: #8a8aab; font-size: 14px; margin-top: 5px;">Earn extra rewards</div>
             
-            if (secondsPassed > 0) {
-                // پر کردن تانک به میزان ثانیه‌های سپری شده تا سقف مجاز
-                tankScore = Math.min(maxTank, tankScore + secondsPassed);
-            }
-        }
+            <div class="list-container">
+                <div class="item-card">
+                    <div class="item-info">
+                        <span class="item-name">Join Channel / عضویت در کانال</span>
+                        <span class="item-reward">💰 +5,000 PASHA</span>
+                    </div>
+                    <button class="action-btn" onclick="handleTask(5000)">Start</button>
+                </div>
+                <div class="item-card">
+                    <div class="item-info">
+                        <span class="item-name">Follow X (Twitter) / توییتر</span>
+                        <span class="item-reward">💰 +3,000 PASHA</span>
+                    </div>
+                    <button class="action-btn" onclick="handleTask(3000)">Start</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        const scoreEl = document.getElementById('score');
-        const tankEl = document.getElementById('tank');
-        const claimButton = document.getElementById('claim-button');
+    <!-- 3. صفحه دوستان (Friends) -->
+    <div id="page-friends" class="page">
+        <div>
+            <div class="page-title">👥 Invite Friends</div>
+            <div style="color: #8a8aab; font-size: 14px; margin-top: 5px;">Get 10% bonus for each friend</div>
+            
+            <div class="list-container" style="justify-content: center; align-items: center; min-height: 200px;">
+                <div style="font-size: 48px;">🎁</div>
+                <div style="font-size: 15px; color: #aeb6bf; margin-top: 10px;">You haven't invited anyone yet!</div>
+                <button class="claim-btn" style="width: auto; margin-top: 25px; padding: 12px 30px;" onclick="copyInviteLink()">🔗 Invite a Friend</button>
+            </div>
+        </div>
+    </div>
 
-        function updateUI() {
-            scoreEl.innerText = totalScore.toLocaleString();
-            tankEl.innerText = tankScore + " / " + maxTank;
-            claimButton.disabled = (tankScore === 0);
+    <!-- 4. صفحه کیف پول (Wallet) -->
+    <div id="page-wallet" class="page">
+        <div>
+            <div class="page-title">👛 Crypto Wallet</div>
+            <div style="color: #8a8aab; font-size: 14px; margin-top: 5px;">Connect your TON wallet</div>
+            
+            <div class="list-container" style="justify-content: center; align-items: center; min-height: 250px;">
+                <div style="font-size: 50px;">💎</div>
+                <div style="font-size: 16px; font-weight: bold; margin-top: 15px;">Wallet Integration</div>
+                <div style="font-size: 13px; color: #7f8c8d; margin-top: 5px; padding: 0 20px;">Coming Soon! In the next phase you can link your Tonkeeper.</div>
+                <button class="claim-btn" style="background: #34495e; color: #bdc3c7; cursor: not-allowed; margin-top: 20px;" disabled>Connect Wallet</button>
+            </div>
+        </div>
+    </div>
 
-            // ذخیره همزمان اطلاعات و زمان فعلی
-            localStorage.setItem('pasha_total_score', totalScore);
-            localStorage.setItem('pasha_tank_score', tankScore);
-            localStorage.setItem('pasha_last_time', Math.floor(Date.now() / 1000));
-        }
+</div>
 
-        // موتور استخراج آنلاین (ثانیه‌شمار زنده)
-        setInterval(() => {
-            if (tankScore < maxTank) {
-                tankScore += 1;
-                updateUI();
-            } else {
-                localStorage.setItem('pasha_last_time', Math.floor(Date.now() / 1000));
-            }
-        }, 1000);
+<!-- منوی ناوبری اصلی پایین صفحه -->
+<nav class="bottom-nav">
+    <button class="nav-item active" onclick="switchPage('mining', this)">
+        <span class="nav-icon">⛏️</span>
+        <span>Mining</span>
+    </button>
+    <button class="nav-item" onclick="switchPage('tasks', this)">
+        <span class="nav-icon">📋</span>
+        <span>Tasks</span>
+    </button>
+    <button class="nav-item" onclick="switchPage('friends', this)">
+        <span class="nav-icon">👥</span>
+        <span>Friends</span>
+    </button>
+    <button class="nav-item" onclick="switchPage('wallet', this)">
+        <span class="nav-icon">👛</span>
+        <span>Wallet</span>
+    </button>
+</nav>
+body {
+    margin: 0; padding: 0; background: radial-gradient(circle, #1a1a2e 0%, #0f0f1b 100%);
+    color: white; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    text-align: center; overflow: hidden; user-select: none; -webkit-user-select: none;
+}
+.container { display: flex; flex-direction: column; justify-content: space-between; height: 100vh; padding: 20px 20px 90px 20px; box-sizing: border-box; }
 
-        // اجرای اولین به‌روزرسانی برای نمایش تغییرات غیبت
+/* استایل صفحات */
+.page { display: none; flex-direction: column; justify-content: space-between; flex-grow: 1; height: 100%; }
+.page.active { display: flex; }
+
+.score-section { margin-top: 10px; }
+.score-title { font-size: 14px; color: #8a8aab; letter-spacing: 1px; }
+.score-value { font-size: 42px; font-weight: bold; margin-top: 5px; color: #ffd700; text-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
+
+.mining-section { display: flex; flex-direction: column; justify-content: center; align-items: center; flex-grow: 1; margin-top: 20px; }
+.coin-wrapper { position: relative; }
+.coin {
+    width: 180px; height: 180px; background: radial-gradient(circle, #ffe066 0%, #f5b041 70%, #d35400 100%);
+    border-radius: 50%; box-shadow: 0 0 30px rgba(245, 176, 65, 0.5);
+    display: flex; justify-content: center; align-items: center; font-size: 55px;
+    border: 8px solid #f39c12; animation: spin 8s linear infinite; cursor: pointer;
+    transition: transform 0.1s;
+}
+.coin:active { transform: scale(0.95); }
+
+@keyframes spin {
+    0% { transform: rotateY(0deg); }
+    100% { transform: rotateY(360deg); }
+}
+
+.tank-section { margin-top: 20px; width: 260px; }
+.tank-title { font-size: 14px; color: #aeb6bf; margin-bottom: 5px; }
+.tank-value { font-size: 24px; font-weight: bold; color: #2ecc71; margin-bottom: 10px; }
+
+.claim-btn {
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+    border: none; color: white; padding: 14px 40px; font-size: 16px; font-weight: bold;
+    border-radius: 12px; cursor: pointer; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
+    transition: transform 0.1s ease, filter 0.2s; width: 100%; margin-top: 5px;
+}
+.claim-btn:active { transform: scale(0.98); }
+.claim-btn:disabled { background: #566573; box-shadow: none; cursor: not-allowed; color: #bdc3c7; }
+
+/* استایل لیست‌ها در بخش‌های فرعی */
+.page-title { font-size: 24px; font-weight: bold; margin-top: 20px; color: #fff; }
+.list-container { flex-grow: 1; display: flex; flex-direction: column; gap: 12px; margin-top: 30px; overflow-y: auto; padding: 5px; }
+.item-card {
+    background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 15px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; text-align: right;
+}
+.item-info { display: flex; flex-direction: column; gap: 4px; }
+.item-name { font-size: 15px; font-weight: bold; }
+.item-reward { font-size: 13px; color: #ffd700; }
+.action-btn {
+    background: #3498db; border: none; color: white; padding: 8px 16px; border-radius: 8px;
+    font-size: 13px; font-weight: bold; cursor: pointer;
+}
+
+/* منوی ناوبری پایینی */
+.bottom-nav {
+    position: fixed; bottom: 15px; left: 15px; right: 15px;
+    background: rgba(21, 21, 37, 0.85); backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px;
+    display: flex; justify-content: space-around; padding: 10px 5px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5); z-index: 1000;
+}
+.nav-item {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    background: none; border: none; color: #8a8aab; cursor: pointer; font-size: 11px;
+    transition: color 0.2s, transform 0.1s; width: 22%;
+}
+.nav-item:active { transform: scale(0.95); }
+.nav-item.active { color: #ffd700; }
+.nav-icon { font-size: 22px; }
+
+.footer-info { margin-top: 15px; color: #7f8c8d; font-size: 11px; }
+const tg = window.Telegram ? window.Telegram.WebApp : null;
+if (tg) {
+    tg.expand(); 
+    tg.ready();
+}
+
+// منطق مدیریت حساب
+let totalScore = parseInt(localStorage.getItem('pasha_total_score')) || 0;
+let tankScore = parseInt(localStorage.getItem('pasha_tank_score')) || 0;
+let maxTank = 500; 
+
+// ماینینگ آفلاین
+const lastSavedTime = localStorage.getItem('pasha_last_time');
+if (lastSavedTime) {
+    const currentTime = Math.floor(Date.now() / 1000);
+    const secondsPassed = currentTime - parseInt(lastSavedTime);
+    if (secondsPassed > 0) {
+        tankScore = Math.min(maxTank, tankScore + secondsPassed);
+    }
+}
+
+const scoreEl = document.getElementById('score');
+const tankEl = document.getElementById('tank');
+const claimButton = document.getElementById('claim-button');
+
+function updateUI() {
+    scoreEl.innerText = totalScore.toLocaleString();
+    tankEl.innerText = tankScore + " / " + maxTank;
+    claimButton.disabled = (tankScore === 0);
+
+    localStorage.setItem('pasha_total_score', totalScore);
+    localStorage.setItem('pasha_tank_score', tankScore);
+    localStorage.setItem('pasha_last_time', Math.floor(Date.now() / 1000));
+}
+
+// موتور استخراج آنلاین زنده
+setInterval(() => {
+    if (tankScore < maxTank) {
+        tankScore += 1;
         updateUI();
+    } else {
+        localStorage.setItem('pasha_last_time', Math.floor(Date.now() / 1000));
+    }
+}, 1000);
 
-        // عملیات دکمه برداشت
-        claimButton.addEventListener('click', (e) => {
-            e.stopPropagation(); 
-            if (tankScore > 0) {
-                totalScore += tankScore; 
-                let claimedAmount = tankScore;
-                tankScore = 0; 
-                updateUI();
+updateUI();
 
-                if (tg && tg.showAlert) {
-                    tg.showAlert(`✅ تعداد ${claimedAmount} امتیاز با موفقیت برداشت شد!`);
-                } else {
-                    alert(`✅ تعداد ${claimedAmount} امتیاز برداشت شد!`);
-                }
-            }
-        });
-    </script>
-</body>
-</html>
+// برداشت امتیاز تانک
+claimButton.addEventListener('click', (e) => {
+    e.stopPropagation(); 
+    if (tankScore > 0) {
+        totalScore += tankScore; 
+        let claimedAmount = tankScore;
+        tankScore = 0; 
+        updateUI();
+        if (tg && tg.showAlert) {
+            tg.showAlert(`✅ تعداد ${claimedAmount} امتیاز با موفقیت برداشت شد!`);
+        }
+    }
+});
+
+// سیستم جابجایی بین صفحات (Navigation System)
+function switchPage(pageId, buttonElement) {
+    document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+    
+    document.getElementById(`page-${pageId}`).classList.add('active');
+    buttonElement.classList.add('active');
+}
+
+// عملکرد دکمه‌های فرعی تسک‌ها
+function handleTask(reward) {
+    totalScore += reward;
+    updateUI();
+    if (tg && tg.showAlert) {
+        tg.showAlert(`💰 تبریک! پاداش ${reward.toLocaleString()} امتیازی به حساب شما اضافه شد.`);
+    } else {
+        alert(`💰 پاداش ${reward.toLocaleString()} امتیازی اضافه شد.`);
+    }
+}
+
+// عملکرد دکمه دعوت از دوستان
+function copyInviteLink() {
+    const dummyLink = "https://t.me";
+    navigator.clipboard.writeText(dummyLink);
+    if (tg && tg.showAlert) {
+        tg.showAlert("🔗 لینک دعوت اختصاصی شما کپی شد! آن را برای دوستانتان بفرستید.");
+    } else {
+        alert("لینک کپی شد!");
+    }
+}
