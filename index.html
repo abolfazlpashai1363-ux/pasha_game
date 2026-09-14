@@ -22,7 +22,7 @@
             width: 200px; height: 200px; background: radial-gradient(circle, #ffe066 0%, #f5b041 70%, #d35400 100%);
             border-radius: 50%; box-shadow: 0 0 30px rgba(245, 176, 65, 0.5);
             display: flex; justify-content: center; align-items: center; font-size: 60px;
-            border: 8px solid #f39c12; animation: spin 8s linear infinite;
+            border: 8px solid #f39c12; animation: spin 8s linear infinite; cursor: pointer;
         }
         
         @keyframes spin {
@@ -38,12 +38,10 @@
             background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
             border: none; color: white; padding: 15px 40px; font-size: 18px; font-weight: bold;
             border-radius: 12px; cursor: pointer; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
-            transition: transform 0.1s ease, filter 0.2s; width: 100%;
+            transition: transform 0.1s ease, filter 0.2s; width: 100%; margin-top: 5px;
         }
         .claim-btn:active { transform: scale(0.98); }
-        .claim-btn:disabled {
-            background: #566573; box-shadow: none; cursor: not-allowed; color: #bdc3c7;
-        }
+        .claim-btn:disabled { background: #566573; box-shadow: none; cursor: not-allowed; color: #bdc3c7; }
 
         .footer-info { margin-bottom: 20px; color: #7f8c8d; font-size: 12px; }
     </style>
@@ -57,18 +55,19 @@
 
         <div class="mining-section">
             <div class="coin-wrapper">
-                <div class="coin">💎</div>
+                <!-- کلیک روی خود سکه هم قفل اول را باز می‌کند -->
+                <div id="coin" class="coin">💎</div>
             </div>
             
             <div class="tank-section">
                 <div class="tank-title">⛏️ Mined (In Tank)</div>
-                <div id="tank" class="tank-value">0</div>
+                <div id="tank" class="tank-value">0 / 500</div>
                 <button id="claim-button" class="claim-btn">📥 Claim / برداشت</button>
             </div>
         </div>
 
         <div class="footer-info">
-            ⚡ Mining speed: +1 point / second
+            ⚡ Mining status: <span id="status-text" style="color: #f1c40f;">Click Coin to Start</span>
         </div>
     </div>
 
@@ -79,19 +78,21 @@
             tg.ready();
         }
 
-        // ✨ رفع قفل: اگر حافظه به خاطر کدهای قبلی خراب است، آن را ریست کن
+        // تمیز کردن حافظه خراب احتمالی
         if (localStorage.getItem('pasha_total_score') === "NaN" || localStorage.getItem('pasha_tank_score') === "NaN") {
             localStorage.clear();
         }
 
-        // لود کردن اطلاعات به صورت عدد صحیح خالص
         let totalScore = parseInt(localStorage.getItem('pasha_total_score')) || 0;
         let tankScore = parseInt(localStorage.getItem('pasha_tank_score')) || 0;
         let maxTank = 500; 
+        let isMiningStarted = false;
 
         const scoreEl = document.getElementById('score');
         const tankEl = document.getElementById('tank');
         const claimButton = document.getElementById('claim-button');
+        const coinEl = document.getElementById('coin');
+        const statusTextEl = document.getElementById('status-text');
 
         function updateUI() {
             scoreEl.innerText = totalScore.toLocaleString();
@@ -102,16 +103,36 @@
             localStorage.setItem('pasha_tank_score', tankScore);
         }
 
-        // ⏱️ شروع استخراج خودکار ثانیه‌ای
-        setInterval(() => {
-            if (tankScore < maxTank) {
-                tankScore += 1;
-                updateUI();
-            }
-        }, 1000);
+        // تابع اصلی برای شروع ثانیه‌شمار استخراج (بدون بلاک شدن توسط مرورگر)
+        function startMiningEngine() {
+            if (isMiningStarted) return;
+            isMiningStarted = true;
+            statusTextEl.innerText = "Active (+1/s) ✅";
+            statusTextEl.style.color = "#2ecc71";
 
-        // منطق دکمه برداشت
-        claimButton.addEventListener('click', () => {
+            setInterval(() => {
+                if (tankScore < maxTank) {
+                    tankScore += 1;
+                    updateUI();
+                }
+            }, 1000);
+        }
+
+        // لود اولیه مقادیر
+        updateUI();
+
+        // 🔓 شکستن قفل تلگرام: به محض اینکه کاربر روی سکه یا صفحه کلیک کند، ماینینگ فعال می‌شود
+        document.body.addEventListener('click', () => {
+            startMiningEngine();
+        }, { once: true }); // فقط یکبار اجرا شود
+
+        coinEl.addEventListener('click', () => {
+            startMiningEngine();
+        });
+
+        // دکمه برداشت
+        claimButton.addEventListener('click', (e) => {
+            e.stopPropagation(); // جلوگیری از تداخل کلیک‌ها
             if (tankScore > 0) {
                 totalScore += tankScore; 
                 let claimedAmount = tankScore;
@@ -123,9 +144,6 @@
                 }
             }
         });
-
-        // لود اولیه
-        updateUI();
     </script>
 </body>
 </html>
