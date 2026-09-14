@@ -55,30 +55,28 @@
 
     <script>
         const tg = window.Telegram.WebApp;
-        tg.expand(); // باز کردن کامل صفحه بازی در تلگرام
+        if (tg) {
+            tg.expand(); 
+            tg.ready();
+        }
 
-        // شبیه‌سازی اطلاعات اولیه از دیتابیس پایتون شما
+        // اصلاح شد: متغیرها به صورت عدد صحیح تعریف شدند تا محاسبات قفل نشود
         let score = 0;
         let energy = 100;
         let maxEnergy = 100;
         let mineLevel = 1;
-
-        // دریافت اطلاعات واقعی کاربر از وب‌اپ تلگرام (در صورت نیاز به توسعه آتی)
-        const user = tg.initDataUnsafe?.user;
 
         const scoreEl = document.getElementById('score');
         const energyStatusEl = document.getElementById('energy-status');
         const energyBarEl = document.getElementById('energy-bar');
         const coinEl = document.getElementById('coin');
 
-        // تابع به‌روزرسانی ظاهر صفحه
         function updateUI() {
             scoreEl.innerText = score.toLocaleString();
             energyStatusEl.innerText = `${energy}/${maxEnergy}`;
             energyBarEl.style.width = `${(energy / maxEnergy) * 100}%`;
         }
 
-        // انیمیشن و منطق کلیک روی سکه نات‌کوین پاشا
         coinEl.addEventListener('click', (e) => {
             if (energy >= 10) {
                 let reward = 10 + (mineLevel - 1) * 5;
@@ -86,7 +84,7 @@
                 energy -= 10;
                 updateUI();
 
-                // افکت متنی عدد بالا رونده (مثل +10 نات کوین)
+                // افکت متنی عدد بالا رونده (+10)
                 const effect = document.createElement('div');
                 effect.className = 'tap-effect';
                 effect.innerText = `+${reward}`;
@@ -95,23 +93,31 @@
                 document.body.appendChild(effect);
                 setTimeout(() => effect.remove(), 600);
 
-                // ارسال سیگنال استخراج به ربات پایتون در پس‌زمینه
-                tg.sendData(JSON.stringify({action: 'mine'}));
+                // ارسال سیگنال کلیک به ربات تلگرام
+                if (tg && tg.sendData) {
+                    tg.sendData(JSON.stringify({
+                        action: 'mine_click',
+                        user_id: tg.initDataUnsafe?.user?.id
+                    }));
+                }
             } else {
-                tg.showAlert("🪫 انرژی شما کافی نیست! لطفاً منتظر شارژ خودکار بمانید.");
+                if (tg && tg.showAlert) {
+                    tg.showAlert("🪫 انرژی شما کافی نیست!");
+                } else {
+                    alert("🪫 انرژی شما کافی نیست!");
+                }
             }
         });
 
-        // سیستم شارژ زمانی (دقیقاً هماهنگ با کدهای پایتون شما)
+        // سیستم شارژ خودکار انرژی (هر ۱ دقیقه +5 واحد)
         setInterval(() => {
             if (energy < maxEnergy) {
                 energy = Math.min(maxEnergy, energy + 5);
-                score += 5; // واریز سود خودکار دقیقه‌ای پاشا
                 updateUI();
             }
-        }, 60000); // هر ۶۰ ثانیه
+        }, 60000);
 
-        // لود اولیه
+        // لود اولیه ظاهر صفحه
         updateUI();
     </script>
 </body>
