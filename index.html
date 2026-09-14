@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>PASHA MINING GAME</title>
-    <script src="https://telegram.org"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
             margin: 0; padding: 0; background: radial-gradient(circle, #1a1a2e 0%, #0f0f1b 100%);
@@ -54,13 +54,19 @@
     </div>
 
     <script>
+        // راه‌اندازی وب‌اپ تلگرام
         const tg = window.Telegram.WebApp;
         if (tg) {
             tg.expand(); 
             tg.ready();
         }
 
-        // لود کردن امتیازات از حافظه محلی خود گوشی کاربر در تلگرام
+        // پاکسازی اتوماتیک کش معیوب قبلی برای رفع قفل سکه
+        if (localStorage.getItem('pasha_score') === "NaN" || !localStorage.getItem('pasha_energy')) {
+            localStorage.clear();
+        }
+
+        // مقداردهی اولیه متغیرها به صورت عددی خالص
         let score = parseInt(localStorage.getItem('pasha_score')) || 0;
         let energy = parseInt(localStorage.getItem('pasha_energy')) || 100;
         let maxEnergy = 100;
@@ -76,40 +82,46 @@
             energyStatusEl.innerText = `${energy}/${maxEnergy}`;
             energyBarEl.style.width = `${(energy / maxEnergy) * 100}%`;
             
-            // ذخیره لحظه‌ای برای اینکه با بستن بازی موجودی صفر نشود
+            // ذخیره مقادیر عددی جدید در حافظه گوشی
             localStorage.setItem('pasha_score', score);
             localStorage.setItem('pasha_energy', energy);
         }
 
         coinEl.addEventListener('click', (e) => {
-            if (energy >= 10) {
-                let reward = 10 + (mineLevel - 1) * 5;
+            // هر کلیک فقط ۱ واحد انرژی کم می‌کند (دقیقاً مثل نات‌کوین)
+            if (energy >= 1) {
+                let reward = 1; // مقدار امتیاز به ازای هر تپ
                 score += reward;
-                energy -= 10;
+                energy -= 1;
                 updateUI();
 
-                // انیمیشن سکه نات‌کوین
+                // انیمیشن تپ سکه
                 const effect = document.createElement('div');
                 effect.className = 'tap-effect';
                 effect.innerText = `+${reward}`;
-                effect.style.left = `${e.clientX - 10}px`;
-                effect.style.top = `${e.clientY - 20}px`;
+                
+                // تنظیم موقعیت نمایش عدد بالا رونده بر اساس محل دقیق لمس دست
+                effect.style.left = `${e.clientX || window.innerWidth / 2}px`;
+                effect.style.top = `${e.clientY || window.innerHeight / 2}px`;
+                
                 document.body.appendChild(effect);
                 setTimeout(() => effect.remove(), 600);
             } else {
-                if (tg && tg.showAlert) tg.showAlert("🪫 انرژی شما کافی نیست!");
+                if (tg && tg.showAlert) {
+                    tg.showAlert("🪫 انرژی شما تمام شده است! منتظر شارژ بمانید.");
+                }
             }
         });
 
-        // سیستم شارژ خودکار انرژی (هر ۱ دقیقه +5 واحد)
+        // سیستم شارژ خودکار انرژی (هر ۱ ثانیه +1 واحد انرژی - مثل نات‌کوین واقعی)
         setInterval(() => {
             if (energy < maxEnergy) {
-                energy = Math.min(maxEnergy, energy + 5);
+                energy = Math.min(maxEnergy, energy + 1);
                 updateUI();
             }
-        }, 60000);
+        }, 1000);
 
-        // لود اولیه
+        // لود کردن اولیه مقادیر روی صفحه
         updateUI();
     </script>
 </body>
