@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PASHA MINING GAME</title>
+    <script src="https://telegram.org"></script>
+    <style>
+        body {
+            margin: 0; padding: 0; background: radial-gradient(circle, #1a1a2e 0%, #0f0f1b 100%);
+            color: white; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            text-align: center; overflow: hidden; user-select: none; -webkit-user-select: none;
+        }
+        .container { display: flex; flex-direction: column; justify-content: space-between; height: 100vh; padding: 20px; box-sizing: border-box; }
+        .score-section { margin-top: 30px; }
+        .score-title { font-size: 14px; color: #8a8aab; letter-spacing: 1px; }
+        .score-value { font-size: 42px; font-weight: bold; margin-top: 5px; color: #ffd700; text-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
+        .coin-section { display: flex; justify-content: center; align-items: center; flex-grow: 1; }
+        .coin {
+            width: 230px; height: 230px; background: radial-gradient(circle, #ffe066 0%, #f5b041 70%, #d35400 100%);
+            border-radius: 50%; box-shadow: 0 0 30px rgba(245, 176, 65, 0.6), inset 0 0 20px rgba(255,255,255,0.6);
+            cursor: pointer; transition: transform 0.05s ease; display: flex; justify-content: center; align-items: center;
+            font-size: 70px; border: 8px solid #f39c12;
+        }
+        .coin:active { transform: scale(0.95); }
+        .energy-section { margin-bottom: 20px; width: 100%; }
+        .energy-text { font-size: 16px; margin-bottom: 8px; display: flex; justify-content: space-between; padding: 0 10px; color: #aeb6bf; }
+        .energy-bar-bg { width: 100%; height: 14px; background-color: #2c3e50; border-radius: 10px; overflow: hidden; }
+        .energy-bar-fill { height: 100%; width: 100%; background: linear-gradient(90deg, #f1c40f, #2ecc71); transition: width 0.1s ease; }
+        .tap-effect { position: absolute; color: #2ecc71; font-size: 28px; font-weight: bold; pointer-events: none; animation: floatUp 0.6s ease-out forwards; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-100px) scale(1.2); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="score-section">
+            <div class="score-title">PASHA BALANCE</div>
+            <div id="score" class="score-value">0</div>
+        </div>
+
+        <div class="coin-section">
+            <div id="coin" class="coin">💎</div>
+        </div>
+
+        <div class="energy-section">
+            <div class="energy-text">
+                <span>⚡ Energy</span>
+                <span id="energy-status">100/100</span>
+            </div>
+            <div class="energy-bar-bg">
+                <div id="energy-bar" class="energy-bar-fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand(); // باز کردن کامل صفحه بازی در تلگرام
+
+        // شبیه‌سازی اطلاعات اولیه از دیتابیس پایتون شما
+        let score = 0;
+        let energy = 100;
+        let maxEnergy = 100;
+        let mineLevel = 1;
+
+        // دریافت اطلاعات واقعی کاربر از وب‌اپ تلگرام (در صورت نیاز به توسعه آتی)
+        const user = tg.initDataUnsafe?.user;
+
+        const scoreEl = document.getElementById('score');
+        const energyStatusEl = document.getElementById('energy-status');
+        const energyBarEl = document.getElementById('energy-bar');
+        const coinEl = document.getElementById('coin');
+
+        // تابع به‌روزرسانی ظاهر صفحه
+        function updateUI() {
+            scoreEl.innerText = score.toLocaleString();
+            energyStatusEl.innerText = `${energy}/${maxEnergy}`;
+            energyBarEl.style.width = `${(energy / maxEnergy) * 100}%`;
+        }
+
+        // انیمیشن و منطق کلیک روی سکه نات‌کوین پاشا
+        coinEl.addEventListener('click', (e) => {
+            if (energy >= 10) {
+                let reward = 10 + (mineLevel - 1) * 5;
+                score += reward;
+                energy -= 10;
+                updateUI();
+
+                // افکت متنی عدد بالا رونده (مثل +10 نات کوین)
+                const effect = document.createElement('div');
+                effect.className = 'tap-effect';
+                effect.innerText = `+${reward}`;
+                effect.style.left = `${e.clientX - 10}px`;
+                effect.style.top = `${e.clientY - 20}px`;
+                document.body.appendChild(effect);
+                setTimeout(() => effect.remove(), 600);
+
+                // ارسال سیگنال استخراج به ربات پایتون در پس‌زمینه
+                tg.sendData(JSON.stringify({action: 'mine'}));
+            } else {
+                tg.showAlert("🪫 انرژی شما کافی نیست! لطفاً منتظر شارژ خودکار بمانید.");
+            }
+        });
+
+        // سیستم شارژ زمانی (دقیقاً هماهنگ با کدهای پایتون شما)
+        setInterval(() => {
+            if (energy < maxEnergy) {
+                energy = Math.min(maxEnergy, energy + 5);
+                score += 5; // واریز سود خودکار دقیقه‌ای پاشا
+                updateUI();
+            }
+        }, 60000); // هر ۶۰ ثانیه
+
+        // لود اولیه
+        updateUI();
+    </script>
+</body>
+</html>
