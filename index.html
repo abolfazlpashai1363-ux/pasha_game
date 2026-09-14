@@ -25,7 +25,7 @@
             border: 8px solid #f39c12; animation: spin 8s linear infinite; cursor: pointer;
             transition: transform 0.1s;
         }
-        .coin:active { transform: scale(0.95) rotateY(10deg); }
+        .coin:active { transform: scale(0.95); }
         
         @keyframes spin {
             0% { transform: rotateY(0deg); }
@@ -68,7 +68,7 @@
         </div>
 
         <div class="footer-info">
-            ⚡ Mining status: <span id="status-text" style="color: #2ecc71;">Active (+1/s) ✅</span>
+            ⚡ Mining status: <span id="status-text" style="color: #2ecc71;">Active ✅</span>
         </div>
     </div>
 
@@ -79,19 +79,19 @@
             tg.ready();
         }
 
-        // لود مقادیر اولیه از حافظه
+        // مقداردهی و بررسی متغیرها
         let totalScore = parseInt(localStorage.getItem('pasha_total_score')) || 0;
         let tankScore = parseInt(localStorage.getItem('pasha_tank_score')) || 0;
         let maxTank = 500; 
 
-        // 🌟 بخش اصلی: محاسبه ماینینگ زمان غیبت کاربر (Offline Mining)
+        // 🌟 محاسبه غیبت کاربر بلافاصله پس از لود صفحه بدون نیاز به کلیک
         const lastSavedTime = localStorage.getItem('pasha_last_time');
         if (lastSavedTime) {
-            const currentTime = Math.floor(Date.now() / 1000); // زمان فعلی به ثانیه
-            const secondsPassed = currentTime - parseInt(lastSavedTime); // محاسبه ثانیه‌های سپری شده
+            const currentTime = Math.floor(Date.now() / 1000);
+            const secondsPassed = currentTime - parseInt(lastSavedTime);
             
             if (secondsPassed > 0) {
-                // اضافه کردن امتیازهای زمان غیبت به مخزن تا سقف مجاز
+                // پر کردن تانک به میزان ثانیه‌های سپری شده تا سقف مجاز
                 tankScore = Math.min(maxTank, tankScore + secondsPassed);
             }
         }
@@ -99,34 +99,32 @@
         const scoreEl = document.getElementById('score');
         const tankEl = document.getElementById('tank');
         const claimButton = document.getElementById('claim-button');
-        const coinEl = document.getElementById('coin');
 
         function updateUI() {
             scoreEl.innerText = totalScore.toLocaleString();
             tankEl.innerText = tankScore + " / " + maxTank;
             claimButton.disabled = (tankScore === 0);
 
-            // ذخیره مداوم وضعیت و زمان فعلی
+            // ذخیره همزمان اطلاعات و زمان فعلی
             localStorage.setItem('pasha_total_score', totalScore);
             localStorage.setItem('pasha_tank_score', tankScore);
             localStorage.setItem('pasha_last_time', Math.floor(Date.now() / 1000));
         }
 
-        // موتور استخراج زنده (زمانی که برنامه باز است)
+        // موتور استخراج آنلاین (ثانیه‌شمار زنده)
         setInterval(() => {
             if (tankScore < maxTank) {
                 tankScore += 1;
                 updateUI();
             } else {
-                // حتی اگر مخزن پر باشد، زمان آخر را ذخیره کن تا باگ زمانی پیش نیاید
                 localStorage.setItem('pasha_last_time', Math.floor(Date.now() / 1000));
             }
         }, 1000);
 
-        // اجرای اولین به‌روزرسانی
+        // اجرای اولین به‌روزرسانی برای نمایش تغییرات غیبت
         updateUI();
 
-        // برداشت امتیازها
+        // عملیات دکمه برداشت
         claimButton.addEventListener('click', (e) => {
             e.stopPropagation(); 
             if (tankScore > 0) {
@@ -136,7 +134,7 @@
                 updateUI();
 
                 if (tg && tg.showAlert) {
-                    tg.showAlert(`✅ تعداد ${claimedAmount} امتیاز با موفقیت به حساب شما واریز شد!`);
+                    tg.showAlert(`✅ تعداد ${claimedAmount} امتیاز با موفقیت برداشت شد!`);
                 } else {
                     alert(`✅ تعداد ${claimedAmount} امتیاز برداشت شد!`);
                 }
