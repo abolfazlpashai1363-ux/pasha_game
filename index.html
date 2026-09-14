@@ -22,10 +22,9 @@
             width: 200px; height: 200px; background: radial-gradient(circle, #ffe066 0%, #f5b041 70%, #d35400 100%);
             border-radius: 50%; box-shadow: 0 0 30px rgba(245, 176, 65, 0.5);
             display: flex; justify-content: center; align-items: center; font-size: 60px;
-            border: 8px solid #f39c12; animation: spin 8px linear infinite; /* انیمیشن چرخش ملایم برای حس استخراج */
+            border: 8px solid #f39c12; animation: spin 8s linear infinite;
         }
         
-        /* انیمیشن چرخش سه بعدی سکه به عنوان نماد استخراج */
         @keyframes spin {
             0% { transform: rotateY(0deg); }
             100% { transform: rotateY(360deg); }
@@ -35,7 +34,6 @@
         .tank-title { font-size: 14px; color: #aeb6bf; margin-bottom: 5px; }
         .tank-value { font-size: 24px; font-weight: bold; color: #2ecc71; margin-bottom: 10px; }
         
-        /* دکمه شیک برداشت */
         .claim-btn {
             background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
             border: none; color: white; padding: 15px 40px; font-size: 18px; font-weight: bold;
@@ -52,13 +50,11 @@
 </head>
 <body>
     <div class="container">
-        <!-- موجودی کل کاربر -->
         <div class="score-section">
             <div class="score-title">TOTAL PASHA BALANCE</div>
             <div id="score" class="score-value">0</div>
         </div>
 
-        <!-- بخش استخراج خودکار و مخزن موقت -->
         <div class="mining-section">
             <div class="coin-wrapper">
                 <div class="coin">💎</div>
@@ -83,10 +79,15 @@
             tg.ready();
         }
 
-        // لود کردن اطلاعات ذخیره شده از حافظه گوشی
+        // ✨ رفع قفل: اگر حافظه به خاطر کدهای قبلی خراب است، آن را ریست کن
+        if (localStorage.getItem('pasha_total_score') === "NaN" || localStorage.getItem('pasha_tank_score') === "NaN") {
+            localStorage.clear();
+        }
+
+        // لود کردن اطلاعات به صورت عدد صحیح خالص
         let totalScore = parseInt(localStorage.getItem('pasha_total_score')) || 0;
         let tankScore = parseInt(localStorage.getItem('pasha_tank_score')) || 0;
-        let maxTank = 500; // سقف ظرفیت مخزن (کاربر باید قبل از پر شدن برداشت کند)
+        let maxTank = 500; 
 
         const scoreEl = document.getElementById('score');
         const tankEl = document.getElementById('tank');
@@ -94,17 +95,14 @@
 
         function updateUI() {
             scoreEl.innerText = totalScore.toLocaleString();
-            tankEl.innerText = `${tankScore} / ${maxTank}`;
-            
-            // اگر مخزن خالی بود، دکمه برداشت غیرفعال شود
+            tankEl.innerText = tankScore + " / " + maxTank;
             claimButton.disabled = (tankScore === 0);
 
-            // ذخیره اطلاعات
             localStorage.setItem('pasha_total_score', totalScore);
             localStorage.setItem('pasha_tank_score', tankScore);
         }
 
-        // ⏱️ هسته اصلی ایده شما: افزایش خودکار امتیاز بر اساس زمان (هر ۱ ثانیه +1 امتیاز به مخزن)
+        // ⏱️ شروع استخراج خودکار ثانیه‌ای
         setInterval(() => {
             if (tankScore < maxTank) {
                 tankScore += 1;
@@ -112,21 +110,21 @@
             }
         }, 1000);
 
-        // 📥 منطق دکمه برداشت (Claim)
+        // منطق دکمه برداشت
         claimButton.addEventListener('click', () => {
             if (tankScore > 0) {
-                totalScore += tankScore; // اضافه شدن امتیاز مخزن به موجودی اصلی
+                totalScore += tankScore; 
                 let claimedAmount = tankScore;
-                tankScore = 0; // خالی شدن مخزن موقت
+                tankScore = 0; 
                 updateUI();
 
                 if (tg && tg.showAlert) {
-                    tg.showAlert(`✅ تعداد ${claimedAmount} امتیاز با موفقیت به موجودی شما اضافه شد!`);
+                    tg.showAlert(`✅ تعداد ${claimedAmount} امتیاز با موفقیت برداشت شد!`);
                 }
             }
         });
 
-        // لود اولیه ظاهر صفحه
+        // لود اولیه
         updateUI();
     </script>
 </body>
