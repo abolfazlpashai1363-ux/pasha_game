@@ -23,7 +23,9 @@
             border-radius: 50%; box-shadow: 0 0 30px rgba(245, 176, 65, 0.5);
             display: flex; justify-content: center; align-items: center; font-size: 60px;
             border: 8px solid #f39c12; animation: spin 8s linear infinite; cursor: pointer;
+            transition: transform 0.1s;
         }
+        .coin:active { transform: scale(0.95) rotateY(10deg); }
         
         @keyframes spin {
             0% { transform: rotateY(0deg); }
@@ -55,14 +57,13 @@
 
         <div class="mining-section">
             <div class="coin-wrapper">
-                <!-- کلیک روی خود سکه هم قفل اول را باز می‌کند -->
                 <div id="coin" class="coin">💎</div>
             </div>
             
             <div class="tank-section">
                 <div class="tank-title">⛏️ Mined (In Tank)</div>
                 <div id="tank" class="tank-value">0 / 500</div>
-                <button id="claim-button" class="claim-btn">📥 Claim / برداشت</button>
+                <button id="claim-button" class="claim-btn" disabled>📥 Claim / برداشت</button>
             </div>
         </div>
 
@@ -72,17 +73,19 @@
     </div>
 
     <script>
-        const tg = window.Telegram.WebApp;
+        // اتصال ایمن به تلگرام
+        const tg = window.Telegram ? window.Telegram.WebApp : null;
         if (tg) {
             tg.expand(); 
             tg.ready();
         }
 
-        // تمیز کردن حافظه خراب احتمالی
+        // بررسی و گارد ضد خراب شدن حافظه
         if (localStorage.getItem('pasha_total_score') === "NaN" || localStorage.getItem('pasha_tank_score') === "NaN") {
             localStorage.clear();
         }
 
+        // مقداردهی اولیه مطمئن با عدد صفر (در صورت نبود داده)
         let totalScore = parseInt(localStorage.getItem('pasha_total_score')) || 0;
         let tankScore = parseInt(localStorage.getItem('pasha_tank_score')) || 0;
         let maxTank = 500; 
@@ -97,13 +100,15 @@
         function updateUI() {
             scoreEl.innerText = totalScore.toLocaleString();
             tankEl.innerText = tankScore + " / " + maxTank;
+            
+            // فعال یا غیرفعال کردن دکمه برداشت بر اساس پر بودن مخزن
             claimButton.disabled = (tankScore === 0);
 
             localStorage.setItem('pasha_total_score', totalScore);
             localStorage.setItem('pasha_tank_score', tankScore);
         }
 
-        // تابع اصلی برای شروع ثانیه‌شمار استخراج (بدون بلاک شدن توسط مرورگر)
+        // موتور استخراج زمان‌بندی شده
         function startMiningEngine() {
             if (isMiningStarted) return;
             isMiningStarted = true;
@@ -118,21 +123,21 @@
             }, 1000);
         }
 
-        // لود اولیه مقادیر
+        // اجرای اولین به‌روزرسانی برای نمایش داده‌های قبلی
         updateUI();
 
-        // 🔓 شکستن قفل تلگرام: به محض اینکه کاربر روی سکه یا صفحه کلیک کند، ماینینگ فعال می‌شود
+        // شروع ماینینگ با اولین کلیک روی سکه یا بدنه صفحه
         document.body.addEventListener('click', () => {
             startMiningEngine();
-        }, { once: true }); // فقط یکبار اجرا شود
+        }, { once: true });
 
         coinEl.addEventListener('click', () => {
             startMiningEngine();
         });
 
-        // دکمه برداشت
+        // اجرای عملیات برداشت امتیازها به اکانت اصلی
         claimButton.addEventListener('click', (e) => {
-            e.stopPropagation(); // جلوگیری از تداخل کلیک‌ها
+            e.stopPropagation(); 
             if (tankScore > 0) {
                 totalScore += tankScore; 
                 let claimedAmount = tankScore;
@@ -140,7 +145,9 @@
                 updateUI();
 
                 if (tg && tg.showAlert) {
-                    tg.showAlert(`✅ تعداد ${claimedAmount} امتیاز با موفقیت برداشت شد!`);
+                    tg.showAlert(`✅ تعداد ${claimedAmount} امتیاز با موفقیت به حساب شما واریز شد!`);
+                } else {
+                    alert(`✅ تعداد ${claimedAmount} امتیاز برداشت شد!`);
                 }
             }
         });
