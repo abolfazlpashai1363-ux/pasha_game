@@ -68,74 +68,65 @@
         </div>
 
         <div class="footer-info">
-            ⚡ Mining status: <span id="status-text" style="color: #f1c40f;">Click Coin to Start</span>
+            ⚡ Mining status: <span id="status-text" style="color: #2ecc71;">Active (+1/s) ✅</span>
         </div>
     </div>
 
     <script>
-        // اتصال ایمن به تلگرام
         const tg = window.Telegram ? window.Telegram.WebApp : null;
         if (tg) {
             tg.expand(); 
             tg.ready();
         }
 
-        // بررسی و گارد ضد خراب شدن حافظه
-        if (localStorage.getItem('pasha_total_score') === "NaN" || localStorage.getItem('pasha_tank_score') === "NaN") {
-            localStorage.clear();
-        }
-
-        // مقداردهی اولیه مطمئن با عدد صفر (در صورت نبود داده)
+        // لود مقادیر اولیه از حافظه
         let totalScore = parseInt(localStorage.getItem('pasha_total_score')) || 0;
         let tankScore = parseInt(localStorage.getItem('pasha_tank_score')) || 0;
         let maxTank = 500; 
-        let isMiningStarted = false;
+
+        // 🌟 بخش اصلی: محاسبه ماینینگ زمان غیبت کاربر (Offline Mining)
+        const lastSavedTime = localStorage.getItem('pasha_last_time');
+        if (lastSavedTime) {
+            const currentTime = Math.floor(Date.now() / 1000); // زمان فعلی به ثانیه
+            const secondsPassed = currentTime - parseInt(lastSavedTime); // محاسبه ثانیه‌های سپری شده
+            
+            if (secondsPassed > 0) {
+                // اضافه کردن امتیازهای زمان غیبت به مخزن تا سقف مجاز
+                tankScore = Math.min(maxTank, tankScore + secondsPassed);
+            }
+        }
 
         const scoreEl = document.getElementById('score');
         const tankEl = document.getElementById('tank');
         const claimButton = document.getElementById('claim-button');
         const coinEl = document.getElementById('coin');
-        const statusTextEl = document.getElementById('status-text');
 
         function updateUI() {
             scoreEl.innerText = totalScore.toLocaleString();
             tankEl.innerText = tankScore + " / " + maxTank;
-            
-            // فعال یا غیرفعال کردن دکمه برداشت بر اساس پر بودن مخزن
             claimButton.disabled = (tankScore === 0);
 
+            // ذخیره مداوم وضعیت و زمان فعلی
             localStorage.setItem('pasha_total_score', totalScore);
             localStorage.setItem('pasha_tank_score', tankScore);
+            localStorage.setItem('pasha_last_time', Math.floor(Date.now() / 1000));
         }
 
-        // موتور استخراج زمان‌بندی شده
-        function startMiningEngine() {
-            if (isMiningStarted) return;
-            isMiningStarted = true;
-            statusTextEl.innerText = "Active (+1/s) ✅";
-            statusTextEl.style.color = "#2ecc71";
+        // موتور استخراج زنده (زمانی که برنامه باز است)
+        setInterval(() => {
+            if (tankScore < maxTank) {
+                tankScore += 1;
+                updateUI();
+            } else {
+                // حتی اگر مخزن پر باشد، زمان آخر را ذخیره کن تا باگ زمانی پیش نیاید
+                localStorage.setItem('pasha_last_time', Math.floor(Date.now() / 1000));
+            }
+        }, 1000);
 
-            setInterval(() => {
-                if (tankScore < maxTank) {
-                    tankScore += 1;
-                    updateUI();
-                }
-            }, 1000);
-        }
-
-        // اجرای اولین به‌روزرسانی برای نمایش داده‌های قبلی
+        // اجرای اولین به‌روزرسانی
         updateUI();
 
-        // شروع ماینینگ با اولین کلیک روی سکه یا بدنه صفحه
-        document.body.addEventListener('click', () => {
-            startMiningEngine();
-        }, { once: true });
-
-        coinEl.addEventListener('click', () => {
-            startMiningEngine();
-        });
-
-        // اجرای عملیات برداشت امتیازها به اکانت اصلی
+        // برداشت امتیازها
         claimButton.addEventListener('click', (e) => {
             e.stopPropagation(); 
             if (tankScore > 0) {
