@@ -9,7 +9,8 @@
 
     <style>
         body {
-    margin: 0; padding: 0; background: radial-gradient(circle, #1a1a2e 0%, #0f0f1b 100%);
+    margin: 0; padding: 0; 
+    background: radial-gradient(circle, #1a150d 0%, #000000 100%);
     color: white; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     text-align: center; overflow: hidden; user-select: none; -webkit-user-select: none;
 }
@@ -26,12 +27,19 @@
 .mining-section { display: flex; flex-direction: column; justify-content: center; align-items: center; flex-grow: 1; margin-top: 20px; }
 .coin-wrapper { position: relative; }
 .coin {
-    width: 180px; height: 180px; background: radial-gradient(circle, #ffe066 0%, #f5b041 70%, #d35400 100%);
-    border-radius: 50%; box-shadow: 0 0 30px rgba(245, 176, 65, 0.5);
-    display: flex; justify-content: center; align-items: center; font-size: 55px;
-    border: 8px solid #f39c12; animation: spin 8s linear infinite; cursor: pointer;
+.coin {
+    width: 200px; 
+    height: 200px; 
+    border-radius: 50%; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    cursor: pointer;
     transition: transform 0.1s;
+    animation: spin 8s linear infinite;
+    background: transparent; 
 }
+
 .coin:active { transform: scale(0.95); }
 
 @keyframes spin {
@@ -85,6 +93,15 @@
 .nav-icon { font-size: 22px; }
 
 .footer-info { margin-top: 15px; color: #7f8c8d; font-size: 11px; }
+.coin-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    /* ایجاد یک هاله طلایی درخشان هماهنگ با رنگ لوگوی پاشا */
+    box-shadow: 0 0 25px rgba(212, 175, 55, 0.6); 
+    border: 4px solid #d4af37; /* مرز طلایی شیک دور توکن */
+}
 
     </style>
 </head>
@@ -101,7 +118,9 @@
 
         <div class="mining-section">
             <div class="coin-wrapper">
-                <div id="coin" class="coin">💎</div>
+                <div id="coin" class="coin">
+    <img src="pasha-token.png" alt="PASHA TOKEN" class="coin-img">
+</div>
             </div>
             
             <div class="tank-section">
