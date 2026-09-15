@@ -9,7 +9,7 @@
 
     <style>
         /* 🎨 کدهای «بخش دوم: CSS» را دقیقاً از سطر زیر شروع به چسباندن کنید: */
-       body {
+ body {
     margin: 0; padding: 0; 
     background: radial-gradient(circle, #1a150d 0%, #000000 100%);
     color: white; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -17,7 +17,7 @@
 }
 .container { display: flex; flex-direction: column; justify-content: space-between; height: 100vh; padding: 20px 20px 90px 20px; box-sizing: border-box; }
 
-/* استایل مدیریت صفحات */
+/* استایل صفحات */
 .page { display: none; flex-direction: column; justify-content: space-between; flex-grow: 1; height: 100%; }
 .page.active { display: flex; }
 
@@ -28,7 +28,7 @@
 .mining-section { display: flex; flex-direction: column; justify-content: center; align-items: center; flex-grow: 1; margin-top: 20px; }
 .coin-wrapper { position: relative; }
 
-/* استایل سکه اصلی (در حالت عادی ثابت است) */
+/* استایل سکه اصلی */
 .coin {
     width: 200px; height: 200px; 
     border-radius: 50%; display: flex; justify-content: center; align-items: center; 
@@ -36,22 +36,27 @@
     background: transparent; overflow: hidden; position: relative;
 }
 
-/* انیمیشن چرخش ۳۶۰ درجه بسیار سریع بر اثر هر تپ */
-.coin.spin-fast {
-    animation: spinFast 0.3s ease-out;
-}
-@keyframes spinFast {
-    0% { transform: scale(0.95) rotateY(0deg); }
-    100% { transform: scale(1) rotateY(360deg); }
+/* انیمیشن چرخش مداوم و سریع در جهت عقربه‌های ساعت برای کل ۸ ثانیه */
+.coin.frenzy-spin {
+    animation: spinClockwise 0.6s linear infinite;
 }
 
-/* سایز و فیکس کردن لبه‌های دایره عکس توکن پاشا */
+/* افکت قفل شدن سکه */
+.coin.disabled {
+    cursor: not-allowed;
+}
+
+@keyframes spinClockwise {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 .coin-img {
     width: 100%; height: 100%; object-fit: cover; border-radius: 50%;
     box-shadow: 0 0 25px rgba(212, 175, 55, 0.6); border: 4px solid #d4af37;
 }
 
-/* استایل سکه‌های کوچکی که هم‌زمان به اطراف پرتاب و غیب می‌شوند */
+/* استایل سکه‌های کوچکی که مدام از مرکز پرتاب می‌شوند */
 .mini-coin {
     position: absolute;
     width: 18px; height: 18px;
@@ -60,12 +65,13 @@
     pointer-events: none; z-index: 999;
     animation: explode 0.5s ease-out forwards;
 }
+
 @keyframes explode {
     0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; }
-    100% { transform: translate(var(--x), var(--y)) scale(0.5) rotate(180deg); opacity: 0; }
+    100% { transform: translate(var(--x), var(--y)) scale(0.4) rotate(180deg); opacity: 0; }
 }
 
-/* افکت پرواز متن عدد +1 بالای سکه */
+/* افکت پرواز متن عدد +1 */
 .tap-animation {
     position: absolute; color: #ffd700; font-size: 26px; font-weight: bold;
     pointer-events: none; animation: floatUp 0.8s ease-out forwards;
@@ -80,7 +86,7 @@
 .tank-title { font-size: 14px; color: #aeb6bf; margin-bottom: 5px; }
 .tank-value { font-size: 24px; font-weight: bold; color: #2ecc71; margin-bottom: 10px; }
 
-/* نشانگر وضعیت بوست موقت */
+/* نوار وضعیت بوست طلایی */
 .boost-badge {
     display: none; background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%);
     color: black; font-weight: bold; font-size: 12px;
@@ -133,7 +139,7 @@
 .nav-icon { font-size: 22px; }
 
 .footer-info { margin-top: 15px; color: #7f8c8d; font-size: 11px; }
- 
+
         
         /* تمام کدهای کادر CSS را اینجا بگذارید */
         
@@ -145,7 +151,7 @@
     <!-- 🧱 کدهای «بخش اول: HTML» را دقیقاً در سطر زیر کپی کنید: -->
     <div class="container">
     
-    <!-- 1. صفحه ماینینگ اصلی (با قابلیت‌های جدید) -->
+    <!-- 1. صفحه ماینینگ اصلی (نسخه جنون و چرخش مداوم) -->
     <div id="page-mining" class="page active">
         <div class="score-section">
             <div class="score-title">TOTAL PASHA BALANCE</div>
@@ -154,7 +160,7 @@
 
         <div class="mining-section">
             <div class="coin-wrapper">
-                <!-- سکه پاشا با لینک آنلاین آزاد و بدون محدودیت -->
+                <!-- سکه اختصاصی پاشا با لینک آنلاین آزاد -->
                 <div id="coin" class="coin">
                     <img src="https://s6.uupload.ir/files/1000304137-modified_ykdj.png" alt="PASHA TOKEN" class="coin-img">
                 </div>
@@ -164,7 +170,7 @@
                 <div class="tank-title">⛏️ Mined (In Tank)</div>
                 <div id="tank" class="tank-value">0 / 500</div>
                 <button id="claim-button" class="claim-btn" disabled>📥 Claim / برداشت</button>
-                <!-- نشانگر فعال شدن وضعیت بوست ۸ ثانیه‌ای -->
+                <!-- نشانگر وضعیت بوست ۸ ثانیه‌ای -->
                 <div id="boost-status" class="boost-badge">🔥 BOOST SPEED +30% (<span id="boost-timer">8</span>s)</div>
             </div>
         </div>
@@ -250,6 +256,7 @@
     </button>
 </nav>
 
+
     
     /* تمام کدهای کادر HTML را اینجا بگذارید */
     
@@ -257,7 +264,7 @@
 
     <script>
         // 🧠 کدهای «بخش سوم: JavaScript» را دقیقاً از سطر زیر شروع به چسباندن کنید:
-        const tg = window.Telegram ? window.Telegram.WebApp : null;
+const tg = window.Telegram ? window.Telegram.WebApp : null;
 if (tg) {
     tg.expand(); 
     tg.ready();
@@ -270,7 +277,8 @@ let maxTank = 500;
 let isBoostActive = false;
 let boostTimeout = null;
 let boostInterval = null;
-let currentMiningSpeed = 1000; // زمان عادی تولید (۱ ثانیه)
+let coinRainInterval = null; 
+let currentMiningSpeed = 1000; 
 let miningTimerId = null;
 
 const scoreEl = document.getElementById('score');
@@ -280,7 +288,7 @@ const coinEl = document.getElementById('coin');
 const boostStatusEl = document.getElementById('boost-status');
 const boostTimerEl = document.getElementById('boost-timer');
 
-// محاسبه و پردازش میزان ماینینگ آفلاین در زمان غیبت کاربر
+// ماینینگ آفلاین زمان غیبت کاربر
 const lastSavedTime = localStorage.getItem('pasha_last_time');
 if (lastSavedTime) {
     const currentTime = Math.floor(Date.now() / 1000);
@@ -300,7 +308,7 @@ function updateUI() {
     localStorage.setItem('pasha_last_time', Math.floor(Date.now() / 1000));
 }
 
-// موتور استخراج انعطاف‌پذیر زمان‌بندی شده
+// موتور استخراج زمان‌بندی شده پویا
 function startMiningEngine() {
     if (miningTimerId) clearInterval(miningTimerId);
     miningTimerId = setInterval(() => {
@@ -313,11 +321,10 @@ function startMiningEngine() {
     }, currentMiningSpeed);
 }
 
-// راه اندازی موتور استخراج در زمان لود بازی
 startMiningEngine();
 updateUI();
 
-// دکمه انتقال موجودی مخزن به حساب اصلی
+// دکمه برداشت امتیاز تانک
 claimButton.addEventListener('click', (e) => {
     e.stopPropagation(); 
     if (tankScore > 0) {
@@ -331,14 +338,21 @@ claimButton.addEventListener('click', (e) => {
     }
 });
 
-// 🌟 رویداد کلیک خلاقانه روی سکه پاشا
+// تابع پیدا کردن مرکز دقیق دایره سکه پاشا
+function getCoinCenter() {
+    const rect = coinEl.getBoundingClientRect();
+    return {
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2
+    };
+}
+
+// رویداد کلیک روی سکه پاشا
 coinEl.addEventListener('click', (e) => {
-    // ۱. شبیه‌سازی چرخش سریع ۳۶۰ درجه به صورت آنی
-    coinEl.classList.remove('spin-fast');
-    void coinEl.offsetWidth; 
-    coinEl.classList.add('spin-fast');
-    
-    // ۲. پاپ‌آپ انیمیشنی عدد +1 در نقطه تاچ انگشت
+    // 🔒 اگر بوست فعال باشد، سکه قفل است و کلیک کار نمی‌کند
+    if (isBoostActive) return;
+
+    // ۱. پاپ‌آپ متنی عدد +1 در نقطه لمس
     const tapText = document.createElement('div');
     tapText.classList.add('tap-animation');
     tapText.innerText = "+1";
@@ -347,41 +361,38 @@ coinEl.addEventListener('click', (e) => {
     document.body.appendChild(tapText);
     setTimeout(() => { tapText.remove(); }, 800);
 
-    // ۳. پرتاب پخش‌شونده و هم‌زمان ۵ سکه کوچک به کناره‌ها و محو شدن
-    for (let i = 0; i < 5; i++) {
+    // ۲. فعال‌سازی چرخش مداوم ساعت‌گرد و قفل کردن سکه
+    coinEl.classList.add('frenzy-spin', 'disabled');
+    
+    // ۳. شروع وضعیت بوست ۸ ثانیه‌ای
+    activateFrenzyBoost();
+});
+
+function activateFrenzyBoost() {
+    isBoostActive = true;
+    boostStatusEl.style.display = 'inline-block';
+    currentMiningSpeed = 700; // افزایش ۳0 درصدی سرعت تولید مخزن
+    startMiningEngine();
+
+    // 🌧️ باران مداوم سکه: پرتاب هر ۱۰۰ میلی‌ثانیه یک‌بار از مرکز سکه
+    coinRainInterval = setInterval(() => {
+        const center = getCoinCenter();
         const miniCoin = document.createElement('div');
         miniCoin.classList.add('mini-coin');
         
-        // محاسبات برداری زوایا جهت انفجار متقارن سکه‌ها به اطراف
-        const angle = (i * (2 * Math.PI / 5)) + (Math.random() * 0.4); 
-        const distance = 60 + Math.random() * 60;
+        const angle = Math.random() * Math.PI * 2; 
+        const distance = 70 + Math.random() * 80;
         const x = Math.cos(angle) * distance;
         const y = Math.sin(angle) * distance;
         
         miniCoin.style.setProperty('--x', `${x}px`);
         miniCoin.style.setProperty('--y', `${y}px`);
-        miniCoin.style.left = `${e.clientX - 9}px`;
-        miniCoin.style.top = `${e.clientY - 9}px`;
+        miniCoin.style.left = `${center.x - 9}px`;
+        miniCoin.style.top = `${center.y - 9}px`;
         
         document.body.appendChild(miniCoin);
-        // غیب شدن و حذف کامل سکه‌های کوچک پس از ۵۰۰ میلی‌ثانیه
         setTimeout(() => { miniCoin.remove(); }, 500);
-    }
-
-    // ۴. اعمال فرآیند بوست شتاب‌دهنده ۳۰ درصدی ۸ ثانیه‌ای
-    activateFrenzyBoost();
-});
-
-function activateFrenzyBoost() {
-    if (isBoostActive) {
-        clearTimeout(boostTimeout);
-        clearInterval(boostInterval);
-    } else {
-        isBoostActive = true;
-        boostStatusEl.style.display = 'inline-block';
-        currentMiningSpeed = 700; // ارتقای فواصل تولید از ۱۰۰۰ به ۷۰۰ میلی‌ثانیه (۳۰٪ سریع‌تر)
-        startMiningEngine();
-    }
+    }, 100);
 
     let timeLeft = 8;
     boostTimerEl.innerText = timeLeft;
@@ -394,13 +405,15 @@ function activateFrenzyBoost() {
 
     boostTimeout = setTimeout(() => {
         isBoostActive = false;
+        clearInterval(coinRainInterval); // متوقف کردن باران سکه
+        coinEl.classList.remove('frenzy-spin', 'disabled'); // باز کردن قفل سکه
         boostStatusEl.style.display = 'none';
-        currentMiningSpeed = 1000; // بازگشت به سرعت پایه
+        currentMiningSpeed = 1000; // بازگشت سرعت به ۱ ثانیه
         startMiningEngine();
     }, 8000);
 }
 
-// ناوبری و جابجایی بین صفحات مینی‌آپ
+// سیستم جابجایی بین صفحات
 function switchPage(pageId, buttonElement) {
     document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
@@ -424,6 +437,7 @@ function copyInviteLink() {
         tg.showAlert("🔗 لینک دعوت اختصاصی شما کپی شد!");
     }
 }
+
 
         
         /* تمام کدهای کادر جاوااسکریپت را اینجا بگذارید */
