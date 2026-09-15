@@ -166,64 +166,54 @@ body::before {
     background: #3498db; border: none; color: white; padding: 8px 16px; border-radius: 8px;
     font-size: 13px; font-weight: bold; cursor: pointer;
 }
-/* --- کادر ناوبری منبت‌کاری شده با گل‌گوشه‌های سلطنتی در ۴ طرف --- */
+/* --- کادر ناوبری منبت‌کاری سه‌بعدی سلطنتی با بافت مخمل و گوشه‌های اسلیمی --- */
 .bottom-nav {
     position: fixed;
     bottom: 28px; 
     left: 20px;
     right: 20px;
     
-    /* پس‌زمینه تیره چوب آبنوس */
-    background: linear-gradient(135deg, #0d0a06 0%, #000000 100%);
+    /* بافت مخمل سیاه لوکس سه‌بعدی */
+    background: radial-gradient(ellipse at center, #14100a 0%, #000000 100%);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
     
-    /* حاشیه منبت‌کاری شده طلایی */
+    /* حاشیه طلایی قرنیزی منبت‌کاری شده */
     border: 3px solid transparent;
     border-image: linear-gradient(135deg, #8a6f27, #e8d08d, #b89742, #fbf5b7, #73591a, #ffd700) 1;
     
     display: flex;
     justify-content: space-around;
     align-items: center; 
-    padding: 8px 4px; 
+    padding: 10px 4px; 
     
-    /* سایه‌زنی سه‌بعدی برجسته */
+    /* سایه‌زنی متراکم و افکت عمیق Bevel & Emboss */
     box-shadow: 
-        0 12px 30px rgba(0, 0, 0, 0.9),
-        0 0 0 1px rgba(212, 175, 55, 0.35),
-        0 0 20px rgba(184, 151, 66, 0.2),
-        inset 0 3px 4px rgba(255, 230, 150, 0.25),   
-        inset 0 -3px 4px rgba(0, 0, 0, 0.8),         
-        inset 0 0 12px rgba(138, 111, 39, 0.3);      
+        0 20px 45px rgba(0, 0, 0, 0.95),
+        0 0 0 1px rgba(212, 175, 55, 0.4),
+        0 0 25px rgba(184, 151, 66, 0.25),
+        inset 0 4px 6px rgba(255, 230, 150, 0.3),   
+        inset 0 -4px 6px rgba(0, 0, 0, 0.9),         
+        inset 0 0 15px rgba(138, 111, 39, 0.4);      
         
     z-index: 1000;
 }
 
-/* ⚜️ خلق گل‌گوشه‌های برجسته طلایی برای سمت چپ و راست قاب ⚜️ */
-.bottom-nav::before, .bottom-nav::after {
-    content: "⚜️"; /* استفاده از نماد سلطنتی لویی چهاردهم (Fleur-de-lis) به عنوان گل‌گوشه مینیاتوری */
+/* ⚜️ استایل‌دهی و تنظیم موقعیت گل‌گوشه‌های مینیاتوری طلایی ⚜️ */
+.corner-ornament {
     position: absolute;
-    font-size: 14px;
-    color: #ffd700;
-    text-shadow: 0 0 8px #b89742, 0 0 2px #fff;
+    width: 22px;
+    height: 22px;
     pointer-events: none;
-    transition: transform 0.3s ease;
-    z-index: 1005;
+    z-index: 1010;
+    /* افکت درخشش فلز برنج و طلای خالص */
+    filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.6)) drop-shadow(0 1px 2px rgba(0,0,0,0.8));
 }
 
-/* قرارگیری گل‌گوشه در سمت چپ کادر ناوبری */
-.bottom-nav::before {
-    left: -4px;
-    top: calc(50% - 10px);
-    transform: scaleX(-1); /* قرینه‌سازی نماد برای سمت چپ */
-}
-
-/* قرارگیری گل‌گوشه در سمت راست کادر ناوبری */
-.bottom-nav::after {
-    right: -4px;
-    top: calc(50% - 10px);
-}
-
+.top-left  { top: -2px; left: -2px; }
+.top-right { top: -2px; right: -2px; transform: scaleX(-1); }
+.bottom-left  { bottom: -2px; left: -2px; transform: scaleY(-1); }
+.bottom-right { bottom: -2px; right: -2px; transform: scale(-1); }
 
 /* --- استایل دکمه‌های منو (فشرده‌تر شده برای باز شدن فضا در وسط) --- */
 .nav-item {
@@ -374,7 +364,15 @@ body::before {
 </div>
 
 <!-- منوی ناوبری اصلی پایین صفحه -->
+<!-- منوی ناوبری اصلی پایین صفحه مجهز به گل‌گوشه‌های مینیاتوری اسلیمی -->
 <nav class="bottom-nav">
+    <!-- ۴ گل‌گوشه منبت‌کاری متالیک طلایی هندسی -->
+    <svg class="corner-ornament top-left" viewBox="0 0 24 24" fill="none"><path d="M2 2H10C7 2 4 5 4 8V16C4 12 6 10 9 10H14C11 12 10 15 10 18V22" stroke="url(#gold-grad)" stroke-width="2" stroke-linecap="round"/><defs><linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#bf953f"/><stop offset="50%" stop-color="#fcf6ba"/><stop offset="100%" stop-color="#aa771c"/></linearGradient></defs></svg>
+    <svg class="corner-ornament top-right" viewBox="0 0 24 24" fill="none"><path d="M2 2H10C7 2 4 5 4 8V16C4 12 6 10 9 10H14C11 12 10 15 10 18V22" stroke="url(#gold-grad)" stroke-width="2" stroke-linecap="round"/></svg>
+    <svg class="corner-ornament bottom-left" viewBox="0 0 24 24" fill="none"><path d="M2 2H10C7 2 4 5 4 8V16C4 12 6 10 9 10H14C11 12 10 15 10 18V22" stroke="url(#gold-grad)" stroke-width="2" stroke-linecap="round"/></svg>
+    <svg class="corner-ornament bottom-right" viewBox="0 0 24 24" fill="none"><path d="M2 2H10C7 2 4 5 4 8V16C4 12 6 10 9 10H14C11 12 10 15 10 18V22" stroke="url(#gold-grad)" stroke-width="2" stroke-linecap="round"/></svg>
+
+    <!-- دکمه‌های منوی شما (همراه با فضای باز در وسط برای آیکون جدید شما) -->
     <button class="nav-item active" onclick="switchPage('mining', this)">
         <span class="nav-icon">⛏️</span>
         <span>Mining</span>
@@ -383,6 +381,10 @@ body::before {
         <span class="nav-icon">📋</span>
         <span>Tasks</span>
     </button>
+    
+    <!-- 👁️ پاشا جان، این فضای خالی وسط کادر برای دکمه پنجم و آیکون جدید توست -->
+    <div style="width: 16%;"></div> 
+
     <button class="nav-item" onclick="switchPage('friends', this)">
         <span class="nav-icon">👥</span>
         <span>Friends</span>
@@ -392,6 +394,7 @@ body::before {
         <span>Wallet</span>
     </button>
 </nav>
+
 
 
     
