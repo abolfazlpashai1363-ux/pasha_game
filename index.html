@@ -174,14 +174,88 @@ body::before {
     display: flex; justify-content: space-around; padding: 10px 5px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5); z-index: 1000;
 }
-.nav-item {
-    display: flex; flex-direction: column; align-items: center; gap: 4px;
-    background: none; border: none; color: #8a8aab; cursor: pointer; font-size: 11px;
-    transition: color 0.2s, transform 0.1s; width: 22%;
+/* --- کادر ناوبری سلطنتی و لوکس طلایی --- */
+.bottom-nav {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    /* پس‌زمینه سیاه عمیق با شیشه مات سلطنتی */
+    background: linear-gradient(135deg, rgba(10, 8, 5, 0.95) 0%, rgba(0, 0, 0, 0.98) 100%);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    
+    /* حاشیه طلایی ضخیم و درخشان سلطنتی */
+    border: 2px solid transparent;
+    border-image: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c) 1;
+    border-radius: 16px; /* نکته: برای فعال شدن ردیوس با border-image، ترجیحاً کادر با باکس شدو نرم می‌شود */
+    
+    display: flex;
+    justify-content: space-around;
+    padding: 12px 6px;
+    
+    /* سایه بیرونی و درخشش نئون طلایی در اطراف کادر */
+    box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.8),
+        0 0 15px rgba(212, 175, 55, 0.25),
+        inset 0 0 10px rgba(212, 175, 55, 0.15); /* سایه طلایی داخلی */
+    z-index: 1000;
 }
-.nav-item:active { transform: scale(0.95); }
-.nav-item.active { color: #ffd700; }
-.nav-icon { font-size: 22px; }
+
+/* --- استایل دکمه‌های منو --- */
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    color: #8f8f9e;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 22%;
+    position: relative;
+    border-radius: 10px;
+    padding: 4px 0;
+}
+
+/* افکت کلیک لمسی */
+.nav-item:active {
+    transform: scale(0.92);
+}
+
+/* --- وضعیت دکمه فعال (سلطنتی متمایز) --- */
+.nav-item.active {
+    color: #ffffff;
+    /* متن طلایی درخشان */
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+}
+
+/* اضافه کردن هاله نوری و خط طلایی بالای آیتم فعال */
+.nav-item.active::before {
+    content: "";
+    position: absolute;
+    top: -14px;
+    width: 60%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #ffd700, transparent);
+    box-shadow: 0 0 8px #ffd700;
+}
+
+/* افکت درخشش آیکون فعال */
+.nav-item.active .nav-icon {
+    transform: translateY(-2px) scale(1.1);
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.8));
+}
+
+.nav-icon {
+    font-size: 24px;
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
 
 .footer-info { margin-top: 15px; color: #7f8c8d; font-size: 11px; }
 
