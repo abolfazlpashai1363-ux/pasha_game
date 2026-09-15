@@ -166,15 +166,12 @@ body::before {
     background: #3498db; border: none; color: white; padding: 8px 16px; border-radius: 8px;
     font-size: 13px; font-weight: bold; cursor: pointer;
 }
-/* --- کادر ناوبری منبت‌کاری شده سه‌بعدی با عرض بهینه و ظریف --- */
+/* --- کادر ناوبری منبت‌کاری شده سه‌بعدی (طول کامل، عرض عمودی ظریف و بهینه) --- */
 .bottom-nav {
     position: fixed;
-    bottom: 25px;
-    /* افزایش فاصله از چپ و راست برای جمع‌وجور شدن عرض کادر */
-    left: 12%;
-    right: 12%;
-    max-width: 400px; /* جلوگیری از پهن شدن بیش از حد در گوشی‌های بزرگ */
-    margin: 0 auto; /* قرارگیری دقیق در مرکز صفحه */
+    bottom: 12px; /* کمی پایین‌تر رفت تا نوار بوست کاملاً آزاد شود */
+    left: 15px;
+    right: 15px;
     
     /* پس‌زمینه تیره شبیه چوب آبنوس */
     background: linear-gradient(135deg, #0d0a06 0%, #000000 100%);
@@ -187,39 +184,37 @@ body::before {
     
     display: flex;
     justify-content: space-around;
-    padding: 12px 6px; /* کمی ارتفاع هم کمتر شد تا ظریف‌تر شود */
+    align-items: center; /* تراز عمودی دقیق آیتم‌ها */
+    padding: 6px 4px; /* کاهش شدید عرض عمودی نوار برای ظرافت و نجات نوار بوست */
     
     /* سایه‌زنی سه‌بعدی برجسته (Emboss) */
     box-shadow: 
-        0 15px 35px rgba(0, 0, 0, 0.9),
+        0 12px 30px rgba(0, 0, 0, 0.9),
         0 0 0 1px rgba(212, 175, 55, 0.35),
         0 0 20px rgba(184, 151, 66, 0.2),
-        inset 0 3px 5px rgba(255, 230, 150, 0.25),   
-        inset 0 -3px 5px rgba(0, 0, 0, 0.8),         
-        inset 0 0 15px rgba(138, 111, 39, 0.3);      
+        inset 0 3px 4px rgba(255, 230, 150, 0.25),   
+        inset 0 -3px 4px rgba(0, 0, 0, 0.8),         
+        inset 0 0 12px rgba(138, 111, 39, 0.3);      
         
     z-index: 1000;
 }
 
-
-/* --- استایل دکمه‌های منو --- */
+/* --- استایل دکمه‌های منو (فشرده‌تر شده برای باز شدن فضا در وسط) --- */
 .nav-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
+    gap: 2px; /* کاهش فاصله بین آیکون و متن */
     background: none;
     border: none;
     color: #8f8f9e;
     cursor: pointer;
-    font-size: 11px;
+    font-size: 10px; /* کمی کوچک‌تر برای جا شدن در نوار ظریف */
     font-weight: bold;
-    letter-spacing: 0.5px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    width: 22%;
+    width: 18%; /* کاهش عرض دکمه‌ها برای ایجاد فضای خالی در وسط کادر */
     position: relative;
-    border-radius: 10px;
-    padding: 4px 0;
+    padding: 2px 0;
 }
 
 /* افکت کلیک لمسی */
@@ -227,37 +222,33 @@ body::before {
     transform: scale(0.92);
 }
 
-/* --- وضعیت دکمه فعال (سلطنتی متمایز) --- */
+/* وضعیت دکمه فعال */
 .nav-item.active {
     color: #ffffff;
-    /* متن طلایی درخشان */
     text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
 }
 
-/* اضافه کردن هاله نوری و خط طلایی بالای آیتم فعال */
+/* خط طلایی بالای آیتم فعال (متناسب با عرض عمودی جدید) */
 .nav-item.active::before {
     content: "";
     position: absolute;
-    top: -14px;
+    top: -8px;
     width: 60%;
-    height: 3px;
+    height: 2px;
     background: linear-gradient(90deg, transparent, #ffd700, transparent);
-    box-shadow: 0 0 8px #ffd700;
+    box-shadow: 0 0 6px #ffd700;
 }
 
-/* افکت درخشش آیکون فعال */
 .nav-item.active .nav-icon {
-    transform: translateY(-2px) scale(1.1);
-    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.8));
+    transform: translateY(-1px) scale(1.05);
+    filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.8));
 }
 
 .nav-icon {
-    font-size: 24px;
+    font-size: 20px; /* کمی کوچک‌تر برای هماهنگی با عرض باریک نوار */
     transition: transform 0.3s ease, filter 0.3s ease;
 }
 
-
-.footer-info { margin-top: 15px; color: #7f8c8d; font-size: 11px; }
 
 
         
