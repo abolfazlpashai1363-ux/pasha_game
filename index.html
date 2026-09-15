@@ -166,14 +166,14 @@ body::before {
     background: #3498db; border: none; color: white; padding: 8px 16px; border-radius: 8px;
     font-size: 13px; font-weight: bold; cursor: pointer;
 }
-/* --- کادر ناوبری منبت‌کاری شده سه‌بعدی (طول کامل، عرض عمودی ظریف و بهینه) --- */
+/* --- کادر ناوبری منبت‌کاری شده با گل‌گوشه‌های سلطنتی در ۴ طرف --- */
 .bottom-nav {
     position: fixed;
-    bottom: 30px; /* کمی پایین‌تر رفت تا نوار بوست کاملاً آزاد شود */
-    left: 15px;
-    right: 15px;
+    bottom: 28px; 
+    left: 20px;
+    right: 20px;
     
-    /* پس‌زمینه تیره شبیه چوب آبنوس */
+    /* پس‌زمینه تیره چوب آبنوس */
     background: linear-gradient(135deg, #0d0a06 0%, #000000 100%);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
@@ -184,10 +184,10 @@ body::before {
     
     display: flex;
     justify-content: space-around;
-    align-items: center; /* تراز عمودی دقیق آیتم‌ها */
-    padding: 6px 4px; /* کاهش شدید عرض عمودی نوار برای ظرافت و نجات نوار بوست */
+    align-items: center; 
+    padding: 8px 4px; 
     
-    /* سایه‌زنی سه‌بعدی برجسته (Emboss) */
+    /* سایه‌زنی سه‌بعدی برجسته */
     box-shadow: 
         0 12px 30px rgba(0, 0, 0, 0.9),
         0 0 0 1px rgba(212, 175, 55, 0.35),
@@ -198,6 +198,32 @@ body::before {
         
     z-index: 1000;
 }
+
+/* ⚜️ خلق گل‌گوشه‌های برجسته طلایی برای سمت چپ و راست قاب ⚜️ */
+.bottom-nav::before, .bottom-nav::after {
+    content: "⚜️"; /* استفاده از نماد سلطنتی لویی چهاردهم (Fleur-de-lis) به عنوان گل‌گوشه مینیاتوری */
+    position: absolute;
+    font-size: 14px;
+    color: #ffd700;
+    text-shadow: 0 0 8px #b89742, 0 0 2px #fff;
+    pointer-events: none;
+    transition: transform 0.3s ease;
+    z-index: 1005;
+}
+
+/* قرارگیری گل‌گوشه در سمت چپ کادر ناوبری */
+.bottom-nav::before {
+    left: -4px;
+    top: calc(50% - 10px);
+    transform: scaleX(-1); /* قرینه‌سازی نماد برای سمت چپ */
+}
+
+/* قرارگیری گل‌گوشه در سمت راست کادر ناوبری */
+.bottom-nav::after {
+    right: -4px;
+    top: calc(50% - 10px);
+}
+
 
 /* --- استایل دکمه‌های منو (فشرده‌تر شده برای باز شدن فضا در وسط) --- */
 .nav-item {
