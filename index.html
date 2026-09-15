@@ -167,40 +167,41 @@ body::before {
     font-size: 13px; font-weight: bold; cursor: pointer;
 }
 
-.bottom-nav {
-    position: fixed; bottom: 15px; left: 15px; right: 15px;
-    background: rgba(21, 21, 37, 0.85); backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px;
-    display: flex; justify-content: space-around; padding: 10px 5px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5); z-index: 1000;
-}
-/* --- کادر ناوبری سلطنتی و لوکس طلایی --- */
+/* --- کادر ناوبری منبت‌کاری شده سه‌بعدی و سلطنتی --- */
 .bottom-nav {
     position: fixed;
     bottom: 20px;
     left: 20px;
     right: 20px;
-    /* پس‌زمینه سیاه عمیق با شیشه مات سلطنتی */
-    background: linear-gradient(135deg, rgba(10, 8, 5, 0.95) 0%, rgba(0, 0, 0, 0.98) 100%);
+    
+    /* پس‌زمینه بسیار تیره شبیه چوب آبنوس گران‌قیمت */
+    background: linear-gradient(135deg, #0d0a06 0%, #000000 100%);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
     
-    /* حاشیه طلایی ضخیم و درخشان سلطنتی */
-    border: 2px solid transparent;
-    border-image: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c) 1;
-    border-radius: 16px; /* نکته: برای فعال شدن ردیوس با border-image، ترجیحاً کادر با باکس شدو نرم می‌شود */
+    /* ایجاد حاشیه منبت‌کاری شده با ۳ پیکسل ضخامت گرادینت فلزی */
+    border: 3px solid transparent;
+    border-image: linear-gradient(135deg, #8a6f27, #e8d08d, #b89742, #fbf5b7, #73591a, #ffd700) 1;
     
     display: flex;
     justify-content: space-around;
-    padding: 12px 6px;
+    padding: 14px 6px;
     
-    /* سایه بیرونی و درخشش نئون طلایی در اطراف کادر */
+    /* سایه‌زنی سه‌بعدی ترکیبی برای القای حس حکاکی و برجستگی قرنیز */
     box-shadow: 
-        0 10px 30px rgba(0, 0, 0, 0.8),
-        0 0 15px rgba(212, 175, 55, 0.25),
-        inset 0 0 10px rgba(212, 175, 55, 0.15); /* سایه طلایی داخلی */
+        /* ۱. سایه اصلی پشت کادر برای جدا شدن از پس‌زمینه */
+        0 15px 35px rgba(0, 0, 0, 0.9),
+        /* ۲. ایجاد نور برجسته بیرونی روی لبه‌های منبت‌کاری شده */
+        0 0 0 1px rgba(212, 175, 55, 0.35),
+        0 0 20px rgba(184, 151, 66, 0.2),
+        /* ۳. خطای دید سه‌بعدی (Emboss) با سایه و نور داخلی */
+        inset 0 3px 5px rgba(255, 230, 150, 0.25),   /* نور لب پر بالا */
+        inset 0 -3px 5px rgba(0, 0, 0, 0.8),         /* سایه فرو رفته پایین */
+        inset 0 0 15px rgba(138, 111, 39, 0.3);      /* عمق رنگ طلایی داخلی */
+        
     z-index: 1000;
 }
+
 
 /* --- استایل دکمه‌های منو --- */
 .nav-item {
